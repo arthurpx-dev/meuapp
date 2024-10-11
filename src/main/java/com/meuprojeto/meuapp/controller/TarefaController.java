@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.meuprojeto.meuapp.dtos.TarefaDTO;
 import com.meuprojeto.meuapp.model.Tarefa;
 import com.meuprojeto.meuapp.service.TarefaService;
 
@@ -27,10 +28,15 @@ public class TarefaController {
     private TarefaService tarefaService;
 
     @GetMapping("/tarefa")
-    public ResponseEntity<List<Tarefa>> todasTarefas() {
-        List<Tarefa> tarefa = tarefaService.getAll();
+    public ResponseEntity<List<TarefaDTO>> todasTarefas() {
+        List<Tarefa> tarefas = tarefaService.getAll();
 
-        return ResponseEntity.ok(tarefa);
+        List<TarefaDTO> tarefasDTO = tarefas.stream()
+                .map(TarefaDTO::tarefa)
+                .toList();
+
+        return ResponseEntity.ok(tarefasDTO);
+
     }
 
     @GetMapping("/tarefa/{id}")

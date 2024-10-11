@@ -57,7 +57,6 @@ public class RelatorioController {
             }
         };
 
-        // headers da resposta para download
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resource.getFilename())
                 .body(resource);

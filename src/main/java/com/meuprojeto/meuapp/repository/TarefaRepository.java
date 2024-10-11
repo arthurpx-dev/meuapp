@@ -1,6 +1,7 @@
 package com.meuprojeto.meuapp.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +24,8 @@ public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
 
     @Query("SELECT t FROM Tarefa t WHERE t.status = :status")
     List<Tarefa> tarefasConcluidas(@Param("status") StatusTarefa status);
+
+    @Query("SELECT t FROM Tarefa t WHERE t.titulo = :titulo")
+    Optional<Tarefa> findByTarefa(@Param("titulo") String titulo);
 
 }

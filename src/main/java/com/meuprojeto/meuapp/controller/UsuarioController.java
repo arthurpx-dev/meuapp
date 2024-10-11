@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.meuprojeto.meuapp.dtos.TarefaDTO;
+import com.meuprojeto.meuapp.dtos.UsuarioDTO;
 import com.meuprojeto.meuapp.model.Usuario;
 import com.meuprojeto.meuapp.service.UsuarioService;
 
@@ -27,11 +29,15 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping("/usuario")
-    public ResponseEntity<List<Usuario>> buscarTodosUsuarios() {
+    public ResponseEntity<List<UsuarioDTO>> buscarTodosUsuarios() {
 
         try {
             List<Usuario> usuarios = usuarioService.todosUsuarios();
-            return ResponseEntity.ok(usuarios);
+            List<UsuarioDTO> usuariosDTO = usuarios.stream()
+                    .map(UsuarioDTO::usuario)
+                    .toList();
+
+            return ResponseEntity.ok(usuariosDTO);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

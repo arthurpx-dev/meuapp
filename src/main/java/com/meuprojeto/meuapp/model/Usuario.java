@@ -2,16 +2,13 @@ package com.meuprojeto.meuapp.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -29,6 +26,12 @@ public class Usuario {
 
     @Column(name = "NOME")
     private String nome;
+
+    @Column(name = "EMAIL")
+    private String email;
+
+    @Column(name = "SENHA")
+    private String senha;
 
     @Column(name = "DATA_NASCIMENTO")
     private LocalDate dataNascimento;

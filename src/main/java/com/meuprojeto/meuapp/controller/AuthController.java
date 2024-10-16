@@ -29,28 +29,28 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body) {
-        Usuario user = this.usuarioRepository.findByEmail(body.email())
+        Usuario usuario = this.usuarioRepository.findByEmail(body.email())
                 .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
-        if (passwordEncoder.matches(body.senha(), user.getSenha())) {
-            String token = this.tokenService.generateToken(user);
-            return ResponseEntity.ok(new ResponseDTO(user.getNome(), token));
+        if (passwordEncoder.matches(body.senha(), usuario.getSenha())) {
+            String token = this.tokenService.generateToken(usuario);
+            return ResponseEntity.ok(new ResponseDTO(usuario.getNome(), token));
         }
         return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO body) {
-        Optional<Usuario> user = this.usuarioRepository.findByEmail(body.email());
+        Optional<Usuario> usuario = this.usuarioRepository.findByEmail(body.email());
 
-        if (user.isEmpty()) {
-            Usuario newUser = new Usuario();
-            newUser.setSenha(passwordEncoder.encode(body.senha()));
-            newUser.setEmail(body.email());
-            newUser.setNome(body.nome());
-            this.usuarioRepository.save(newUser);
+        if (usuario.isEmpty()) {
+            Usuario novoUsuario = new Usuario();
+            novoUsuario.setSenha(passwordEncoder.encode(body.senha()));
+            novoUsuario.setEmail(body.email());
+            novoUsuario.setNome(body.nome());
+            this.usuarioRepository.save(novoUsuario);
 
-            String token = this.tokenService.generateToken(newUser);
-            return ResponseEntity.ok(new ResponseDTO(newUser.getNome(), token));
+            String token = this.tokenService.generateToken(novoUsuario);
+            return ResponseEntity.ok(new ResponseDTO(novoUsuario.getNome(), token));
 
         }
 

@@ -3,7 +3,6 @@ package com.meuprojeto.meuapp.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 
 import com.meuprojeto.meuapp.model.Tarefa;

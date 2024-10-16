@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.meuprojeto.meuapp.model.Papel;
 import com.meuprojeto.meuapp.model.Usuario;
 import com.meuprojeto.meuapp.repository.UsuarioRepository;
 
@@ -49,6 +50,10 @@ public class UsuarioService {
         }
         usuarioRepo.deleteById(uuid);
 
+    }
+
+    public List<Papel> getPapeisByEmail(String email) {
+        return usuarioRepo.findPapeisByEmail(email);
     }
 
 }

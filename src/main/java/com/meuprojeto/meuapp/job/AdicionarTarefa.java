@@ -2,7 +2,6 @@ package com.meuprojeto.meuapp.job;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -10,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.meuprojeto.meuapp.model.Tarefa;
-import com.meuprojeto.meuapp.repository.TarefaRepository;
+
 import com.meuprojeto.meuapp.service.TarefaService;
 
 import lombok.AllArgsConstructor;
@@ -24,9 +23,6 @@ public class AdicionarTarefa {
 
     @Autowired
     private TarefaService tarefaService;
-
-    @Autowired
-    private TarefaRepository tarefaRepo;
 
     @Scheduled(cron = "0 * 6 * * *")
     @Async
@@ -49,7 +45,7 @@ public class AdicionarTarefa {
     @Scheduled(cron = "0 * 6 * * *")
     @Async
     public void finalizarTarefa() {
-        log.info("Incializando finalização de tarefas JOB");
+        log.info("Iniciando finalização de tarefas JOB");
         tarefaService.finalizarTarefa();
         log.info("Finalizando JOB de finalização de tarefas");
     }
@@ -57,7 +53,7 @@ public class AdicionarTarefa {
     @Scheduled(cron = "0 * 6 * * *")
     @Async
     public void calcularPercentualConcluido() {
-        log.info("Inicializando calculo de porcentagem de tarefas concluidas");
+        log.info("Iniciando calculo de porcentagem de tarefas concluidas");
         tarefaService.calcularPercentualConcluido();
         log.info("Finalizando calculo de porcentagem de tarefas concluidas");
 

@@ -13,14 +13,14 @@ import com.meuprojeto.meuapp.repository.UsuarioRepository;
 
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+        @Autowired
+        private UsuarioRepository usuarioRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario user = this.usuarioRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getSenha(),
-                new ArrayList<>());
-    }
+        @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                Usuario user = this.usuarioRepository.findByEmail(username)
+                                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getSenha(),
+                                new ArrayList<>());
+        }
 }

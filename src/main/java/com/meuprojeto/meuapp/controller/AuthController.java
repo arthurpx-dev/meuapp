@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meuprojeto.meuapp.config.TokenService;
+import com.meuprojeto.meuapp.dtos.AlteraSenhaDTO;
 import com.meuprojeto.meuapp.dtos.EsqueceuSenhaRequestDTO;
 import com.meuprojeto.meuapp.dtos.LoginRequestDTO;
 import com.meuprojeto.meuapp.dtos.RegisterRequestDTO;
 import com.meuprojeto.meuapp.dtos.ResponseDTO;
-import com.meuprojeto.meuapp.model.Papel;
 import com.meuprojeto.meuapp.model.Usuario;
-import com.meuprojeto.meuapp.repository.PapelRepository;
 import com.meuprojeto.meuapp.repository.UsuarioRepository;
 import com.meuprojeto.meuapp.service.EmailService;
 
@@ -68,10 +67,26 @@ public class AuthController {
         Usuario usuario = this.usuarioRepository.findByEmail(body.email())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         String resetToken = tokenService.generateResetToken(usuario);
-        String resetLink = "http://localhost:4200/reset-password?token=" + resetToken;
-        emailService.sendResetPasswordEmail(usuario.getEmail(), resetLink);
+        String resetLink = "http://localhost:4200/altera-senha?token=" + resetToken;
+        emailService.envioEmailAlteraSenha(usuario.getEmail(), resetLink);
 
         return ResponseEntity.ok("Link de redefinição de senha enviado para o e-mail.");
+    }
+
+    @PostMapping("/altera-senha")
+    public ResponseEntity<String> resetPassword(@RequestBody AlteraSenhaDTO body) {
+        String email = tokenService.validateToken(body.token());
+        if (email == null) {
+            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
+        }
+
+        Usuario usuario = this.usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuario.setSenha(passwordEncoder.encode(body.novaSenha()));
+        this.usuarioRepository.save(usuario);
+
+        return ResponseEntity.ok("Senha redefinida com sucesso.");
     }
 
 }

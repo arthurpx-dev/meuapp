@@ -44,7 +44,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("login-auth-api")
+                    .withIssuer("reset-password")
                     .withSubject(usuario.getEmail())
                     .withClaim("userUuid", usuario.getUuid().toString())
                     .withExpiresAt(LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00")))
@@ -53,7 +53,6 @@ public class TokenService {
             throw new RuntimeException("Erro ao gerar o token de recuperação de senha");
         }
     }
-    
 
     public String validateToken(String token) {
         try {
@@ -68,7 +67,20 @@ public class TokenService {
         }
     }
 
+    public String validateResetToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
+                    .withIssuer("reset-password")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTVerificationException exception) {
+            return null;
+        }
+    }
+
     private Instant generateExpirationDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
-}
+} 

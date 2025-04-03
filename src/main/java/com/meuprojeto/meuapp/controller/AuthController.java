@@ -19,6 +19,7 @@ import com.meuprojeto.meuapp.dtos.ResponseDTO;
 import com.meuprojeto.meuapp.model.Usuario;
 import com.meuprojeto.meuapp.repository.UsuarioRepository;
 import com.meuprojeto.meuapp.service.EmailService;
+import com.meuprojeto.meuapp.service.WhatsAppService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +32,8 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final EmailService emailService;
-
+    private final WhatsAppService whatsAppService;
+  
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body) {
         Usuario usuario = this.usuarioRepository.findByEmail(body.email())
@@ -63,7 +65,7 @@ public class AuthController {
     }
 
     @PostMapping("/esqueceu-senha")
-    public ResponseEntity<String> forgotPassword(@RequestBody EsqueceuSenhaRequestDTO body) {
+    public ResponseEntity<String> esqueceuSenha(@RequestBody EsqueceuSenhaRequestDTO body) {
         Usuario usuario = this.usuarioRepository.findByEmail(body.email())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         String resetToken = tokenService.generateResetToken(usuario);
@@ -74,8 +76,8 @@ public class AuthController {
     }
 
     @PostMapping("/altera-senha")
-    public ResponseEntity<String> resetPassword(@RequestBody AlteraSenhaDTO body) {
-        String email = tokenService.validateToken(body.token());
+    public ResponseEntity<String> alteraSenha(@RequestBody AlteraSenhaDTO body) {
+        String email = tokenService.validateResetToken(body.token());
         if (email == null) {
             return ResponseEntity.badRequest().body("Token inválido ou expirado.");
         }
@@ -88,5 +90,20 @@ public class AuthController {
 
         return ResponseEntity.ok("Senha redefinida com sucesso.");
     }
+
+    @PostMapping("/esqueceu-senha/whatsapp")
+public ResponseEntity<String> esqueceuSenhaWhatsapp(@RequestBody EsqueceuSenhaRequestDTO body) {
+    Usuario usuario = this.usuarioRepository.findByEmail(body.email())
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    
+    String resetToken = tokenService.generateResetToken(usuario);
+    String resetLink = "http://localhost:4200/altera-senha?token=" + resetToken;
+    String mensagem = "Olá " + usuario.getNome() + ", para redefinir sua senha, acesse o link: " + resetLink;
+
+    whatsAppService.enviarMensagemWhatsApp(mensagem);
+
+    return ResponseEntity.ok("Link de redefinição de senha enviado para o WhatsApp.");
+}
+
 
 }

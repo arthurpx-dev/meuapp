@@ -49,7 +49,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/esqueceu-senha").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/esqueceu-senha/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/tarefa").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/usuario").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()

@@ -1,6 +1,7 @@
 package com.meuprojeto.meuapp.controller;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,11 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meuprojeto.meuapp.config.TokenService;
+import com.meuprojeto.meuapp.dtos.EsqueceuSenhaRequestDTO;
 import com.meuprojeto.meuapp.dtos.LoginRequestDTO;
 import com.meuprojeto.meuapp.dtos.RegisterRequestDTO;
 import com.meuprojeto.meuapp.dtos.ResponseDTO;
+import com.meuprojeto.meuapp.model.Papel;
 import com.meuprojeto.meuapp.model.Usuario;
+import com.meuprojeto.meuapp.repository.PapelRepository;
 import com.meuprojeto.meuapp.repository.UsuarioRepository;
+import com.meuprojeto.meuapp.service.EmailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +31,7 @@ public class AuthController {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final EmailService emailService;
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body) {
@@ -55,6 +61,17 @@ public class AuthController {
         }
 
         return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/esqueceu-senha")
+    public ResponseEntity<String> forgotPassword(@RequestBody EsqueceuSenhaRequestDTO body) {
+        Usuario usuario = this.usuarioRepository.findByEmail(body.email())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        String resetToken = tokenService.generateResetToken(usuario);
+        String resetLink = "http://localhost:4200/reset-password?token=" + resetToken;
+        emailService.sendResetPasswordEmail(usuario.getEmail(), resetLink);
+
+        return ResponseEntity.ok("Link de redefinição de senha enviado para o e-mail.");
     }
 
 }
